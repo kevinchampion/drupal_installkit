@@ -1,0 +1,5 @@
+<?php
+/**
+ * @file
+ * InstallKit's installation file for schema, install and update hooks.
+ */
