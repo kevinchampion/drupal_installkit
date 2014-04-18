@@ -1,0 +1,80 @@
+diff --git a/uuid_features.module b/uuid_features.module
+index a96efd7..cf412c1 100644
+--- a/uuid_features.module
++++ b/uuid_features.module
+@@ -496,3 +496,75 @@ function _uuid_features_file_field_import_file(&$file) {
+ 
+   return TRUE;
+ }
++
++/**
++ * Implements hook_entity_presave().
++ */
++function uuid_features_entity_presave($entity, $type) { 
++  _uuid_panelizer_entity_presave($entity, $type);
++}
++
++/**
++ * Implements hook_entity_insert().
++ */
++function uuid_features_entity_insert($entity, $type) { 
++  _uuid_panelizer_entity_insert($entity, $type);
++}
++
++/**
++ * Implements hook_entity_update().
++ */
++function uuid_features_entity_update($entity, $type) { 
++  _uuid_panelizer_entity_insert($entity, $type);
++}
++
++/**
++ * Implements hook_entity_presave().
++ */
++function _uuid_panelizer_entity_presave($entity, $type) { 
++  if (isset($entity->panelizer)) {
++    $fix_panel = FALSE;
++    foreach ($entity->panelizer as $name => $panel) {
++      if (is_array($panel)) {
++        $fix_panel = TRUE;
++        break;
++      }
++      $panel = (object) $panel;
++      if (isset($panel->entity_id) && $panel->entity_id != entity_id($type, $entity)) {
++        $fix_panel = TRUE;
++        break;
++      }
++    }
++    if ($fix_panel) {
++      $fixes = &drupal_static(__FUNCTION__, array());
++      $fixes[$entity->uuid] = $entity->panelizer;
++      unset($entity->panelizer);
++    }
++  }
++}
++
++/**
++ * Implements hook_entity_insert().
++ */
++function _uuid_panelizer_entity_insert($entity, $type) { 
++  $fixes = &drupal_static('_uuid_panelizer_entity_presave', array());
++  if (isset($entity->uuid) && isset($fixes[$entity->uuid])) {
++    list($id, $vid, $bundle) = entity_extract_ids($type, $entity);
++    foreach ($fixes[$entity->uuid] as $name => $panel) {
++      // We need to rebuild the panelizer objects correctly
++      $panel = (object) $panel;
++      $panel->entity_id = $id;
++      $panel->revision_id = $vid;
++      
++      // Check panel has panes in display
++      if (!empty($panel->display)) {
++        $panel->display = (object) $panel->display;
++        foreach($panel->display->content as &$pane) {
++          $pane = (object) $pane;
++        }
++      }
++      $entity->panelizer[$name] = $panel;
++    }
++    unset($fixes[$entity->uuid]);
++  }
++}
