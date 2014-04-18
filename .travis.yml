@@ -31,10 +31,10 @@ before_script:
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 script:
-  - drush make build-installkit.make packaged --no-cache --no-gitinfofile --yes --verbose
+  - drush make build-installkit.make packaged --no-cache --no-gitinfofile --yes
   - cd packaged
-  - drush site-install installkit --account-name=admin --account-pass=password --account-mail=admin@localhost.com --site-mail=admin@localhost.com --site-name=InstallKit --db-url=mysql://root@localhost/installkit --yes --verbose
-  - drush fra --yes --verbose
+  - drush site-install installkit --account-name=admin --account-pass=password --account-mail=admin@localhost.com --site-mail=admin@localhost.com --site-name=InstallKit --db-url=mysql://root@localhost/installkit --yes
+  - drush fra --yes
   - drush cc all
   - cd ..
   - curl localhost
