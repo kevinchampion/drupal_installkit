@@ -28,6 +28,7 @@ before_script:
   - sudo a2enmod rewrite
   - sudo a2enmod actions
   - sudo service apache2 restart
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 script:
   - drush make build-installkit.make packaged --no-cache --no-gitinfofile --yes
