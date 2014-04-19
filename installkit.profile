@@ -7,6 +7,11 @@
 require_once 'includes/installkit.system.inc';
 
 /**
+ * Denotes the version of InstallKit.
+ */
+define('INSTALLKIT_VERSION', '7.x-0.1');
+
+/**
  * Defines the watchdog type.
  */
 define('INSTALLKIT_WATCHDOG_TYPE', 'installkit');

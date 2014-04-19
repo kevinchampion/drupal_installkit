@@ -2,7 +2,7 @@ name = InstallKit
 description = A Drupal installation profile that enables immediate development to begin that provides a variety of advanced and innovative thinking that is not commonly seen in the Drupal community.
 distribution_name = InstallKit
 core = 7.x
-version = 7.x-0.1
+version = INSTALLKIT_VERSION
 php = 5.3.3
 
 ; Drupal core modules to be installed and enabled.
