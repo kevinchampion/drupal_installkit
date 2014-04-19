@@ -99,3 +99,6 @@ dependencies[] = views_bulk_operations
 dependencies[] = views_content_cache
 dependencies[] = views_tree
 dependencies[] = views_ui
+
+; InstallKit module dependencies.
+dependencies[] = installkit_fields
