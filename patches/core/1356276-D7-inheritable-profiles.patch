@@ -21,13 +21,7 @@ index 34828e8..07b98cb 100644
 +  else {
 +    $profiles = variable_get('install_profiles', array(drupal_get_profile()));
 +  }
-+  while(list($key, $profile) = each($profiles)) {
-+    $path = drupal_get_path('profile', $profile) . '/' . $profile . '.info';
-+    $info = drupal_parse_info_file($path);
-+    if (!empty($info['base profile'])) {
-+      $profiles[] = $info['base profile'];
-+    }
-+  }
++
 +  return $profiles;
 +}
  
