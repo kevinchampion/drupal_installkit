@@ -11,7 +11,7 @@
 * [Requirements](REQUIREMENTS.md)
 * [Installation](INSTALLATION.md)
 * [Configuration](CONFIGURATION.md)
-*
+
 #### Suggested and Best Practices
 
 * *Currently no documentation entries exist for this section.*
