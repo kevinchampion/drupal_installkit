@@ -1,0 +1,86 @@
+<?php
+/**
+ * @file
+ * InstallKit Field's implementation of Drupal hooks.
+ */
+
+/**
+ * A field's active state value.
+ */
+define('INSTALLKIT_FIELDS_FIELD_ACTIVE', 1);
+
+/**
+ * A field's inactive state value.
+ */
+define('INSTALLKIT_FIELDS_FIELD_INACTIVE', 0);
+
+/**
+ * A field's deleted state value.
+ */
+define('INSTALLKIT_FIELDS_FIELD_DELETED', 1);
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function installkit_fields_form_field_ui_field_overview_form_alter(&$form, &$form_state, $form_id) {
+  $js_fields = array();
+  $existing_field_options = array();
+  // Get all of the existing, not just the `instances`, re-build the select.
+  $existing_fields = installkit_fields_field_ui_existing_field_options($form['#entity_type'], $form['#bundle']);
+  foreach ($existing_fields as $field_name => $field_info) {
+    $text = t('@type: @field', array(
+      '@type' => $field_info['type_label'],
+      '@field' => $field_info['field_name'],
+    ));
+    $existing_field_options[$field_name] = truncate_utf8($text, 80, FALSE, TRUE);
+    $js_fields[$field_name] = array(
+      'label' => $field_name,
+      'type' => $field_info['type'],
+      'widget' => '',
+    );
+  }
+  $form['fields']['_add_existing_field']['field_name']['#options'] = $existing_field_options;
+  // Remove the previously set fields data, attach the rebuilt fields for javascript selection.
+  $previous_js_fields = array_pop($form['#attached']['js']);
+  $form['#attached']['js'][] = array(
+    'type' => 'setting',
+    'data' => array(
+      'fields' => $js_fields,
+      'fieldWidgetTypes' => $previous_js_fields['data']['fieldWidgetTypes'],
+    ),
+  );
+}
+
+/**
+ * Returns an Drupal Form API #options array for `Add Existing Fields` dropdown.
+ *
+ * @param string $entity_type
+ *   The type of entity (example: node).
+ * @param $bundle_name
+ *   The bundle type of the entity (example: page).
+ *
+ * @return mixed $existing_field_options
+ *   Returns an array of existing fields that are attachable to this entity.
+ */
+function installkit_fields_field_ui_existing_field_options($entity_type, $bundle_name) {
+  $existing_field_options = &drupal_static(__FUNCTION__, array());
+  if (!isset($existing_field_options[$entity_type][$bundle_name])) {
+    $existing_field_options[$entity_type][$bundle_name] = array();
+    $fields = field_read_fields(array(), array(
+      'include_deleted' => FALSE,
+      'include_inactive' => FALSE,
+    ));
+    $field_types = field_info_field_types();
+    $instances = field_info_instances($entity_type, $bundle_name);
+    foreach ($fields as $field_name => $field) {
+      if (!isset($instances[$field['field_name']])) {
+        $existing_field_options[$entity_type][$bundle_name][$field_name] = array(
+          'type' => $field['type'],
+          'type_label' => $field_types[$field['type']]['label'],
+          'field_name' => $field_name,
+        );
+      }
+    }
+  }
+  return $existing_field_options[$entity_type][$bundle_name];
+}

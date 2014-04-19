@@ -1,0 +1,6 @@
+name = InstallKit Fields
+description = Enhances the use of working with Fields.
+core = 7.x
+package = InstallKit
+version = 7.x-0.1
+project = installkit_fields
